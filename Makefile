@@ -11,7 +11,7 @@ ARCH := $(shell uname -m)
 
 ifeq ($(OS), Darwin) # MacOS specific commands
 ifeq ($(ARCH),arm64)
-LIBS_TARGET += /opt/homeb/opt/readline/lib/libreadline.a
+LIBS_TARGET += /opt/homebrew/opt/readline/lib/libreadline.a
 INC	+= /opt/homebrew/opt/readline/include
 else
 LIBS_TARGET += /usr/local/Cellar/readline/8.1.2/lib/libreadline.a
@@ -46,6 +46,7 @@ SRCS        :=	main.c \
 				redirections/redirect_output.c \
 				execute/execute.c \
 				execute/execute_builtin_cmds.c \
+				execute/execute_system_cmds.c \
 				execute/get_next_node.c
 
 SRCS        := $(SRCS:%=$(SRC_DIR)/%)

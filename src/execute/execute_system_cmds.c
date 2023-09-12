@@ -1,0 +1,101 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute_system_cmds.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/09/11 20:33:30 by mehdimirzai       #+#    #+#             */
+/*   Updated: 2023/09/11 22:21:28 by mehdimirzai      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "shell.h"
+
+char	**join_cmd(t_cmd *cmd)
+{
+	char	**joined;
+	int		num_args;
+	t_arglst	*args_ref;
+
+	num_args = 1;
+	args_ref = cmd->args;
+	while (args_ref)
+	{
+		args_ref = args_ref->next;
+		num_args++;
+	}
+	joined = malloc(sizeof(char *) * num_args + 1);
+	joined[0] = cmd->cmd;
+	num_args = 1;
+	args_ref = cmd->args;
+	while (args_ref)
+	{
+		joined[num_args++] = args_ref->str;
+		args_ref = args_ref->next;
+	}
+	joined[num_args] = NULL;
+	return (joined);
+}
+
+/*same as strcat but it places a '/' between the joined strings*/
+char	*ft_cmdcat(char *path, char *cmd)
+{
+	int		len_path;
+	int		len_cmd;
+	char	*file_path;
+	int		i;
+	int		j;
+
+	i = -1;
+	j = -1;
+	len_path = ft_strlen(path);
+	len_cmd = ft_strlen(cmd);
+	file_path = malloc(sizeof(char) * (len_cmd + len_path + 2));
+	if (file_path == NULL)
+		return (NULL);
+	while (++i < len_path)
+		file_path[i] = path[i];
+	file_path[i++] = '/';
+	while (++j < len_cmd)
+		file_path[i + j] = cmd[j];
+	file_path[i + j] = '\0';
+	return (file_path);
+}
+
+char	*cmd_path(char **splitted_paths, char *cmd)
+{
+	char	*file_path;
+	int		val;
+
+	if (strncmp(cmd, "./", 2) == 0)
+		return (cmd);
+	while (*splitted_paths)
+	{
+		file_path = ft_cmdcat(*splitted_paths, cmd);
+		val = access(file_path, X_OK);
+		if (val == 0)
+			return (file_path);
+		free(file_path);
+		++splitted_paths;
+	}
+	ft_putstr_fd(cmd, 2);
+	perror(" command not found");
+	exit(127);
+}
+
+// extern char **environ;
+
+void	execute_system_cmds(t_cmd *cmd, t_env *env)
+{
+	(void)env;
+	char	**cmd_args_joined;
+	char	*cmd_plus_path;
+	char	**paths_splitted;
+
+	cmd_args_joined = join_cmd(cmd);
+	paths_splitted = ft_split(env_get(env, "PATH"), ':');
+	cmd_plus_path = cmd_path(paths_splitted, cmd->cmd);
+	if (execve(cmd_plus_path, cmd_args_joined, NULL) == -1)
+		exit(EXIT_FAILURE);
+}

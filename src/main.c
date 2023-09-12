@@ -78,26 +78,11 @@ int main(int argc, char **argv, char **env)
 			free_env(our_env);
 			exit(EXIT_SUCCESS);
 		}
-		if (line_read[0] == '#' && line_read[1] == '1') // For testing purposes
-			line_read = ft_strdup("cat << EOF > file | wc -c | tr -d " " > file");
-		if (line_read[0] == '#' && line_read[1] == '2' ) // For testing purposes
-			line_read = ft_strdup("   \techo \t\"test \'(quote)\'\" \'sq\' <less | tr -r | awk '{printf $0}' | (first (second) (third (forth)))");
-
-
 		// Do something with line_read, if needed
 		t_token *lst = tlst_create(line_read);
 		ast = ast_build(lst);
-		// tast_print(ast);
-		// tlst_print(lst);
-		// if (ast->type == E_ASTCMD && ast->u_node.cmd && ast->u_node.cmd->cmd)
-		// {
-		// 	ast_expandall(ast, our_env);
-		// 	tast_print(ast);
-
-		// 	//free_darray(inargv, argv);
-		// }
-
 		ast_expandall(ast, our_env);
+		tast_print(ast);
 		execute(ast, our_env);
 
 		// Free the memory after you're done using it

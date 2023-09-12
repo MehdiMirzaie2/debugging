@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_builtin_cmds.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmirzaie <mmirzaie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 10:43:28 by mmirzaie          #+#    #+#             */
-/*   Updated: 2023/09/11 14:49:50 by mmirzaie         ###   ########.fr       */
+/*   Updated: 2023/09/11 20:33:01 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,23 +18,23 @@ check whether the string has a specific character, if so it will return
 the last position of that character
 */
 
-int	ft_strrchrpos(const char *s, int c)
-{
-	int		i;
-	char	*convert;
-	char	character;
+// int	ft_strrchrpos(const char *s, int c)
+// {
+// 	int		i;
+// 	char	*convert;
+// 	char	character;
 
-	convert = (char *)s;
-	character = (char)c;
-	i = ft_strlen(convert);
-	while (i >= 0)
-	{
-		if (convert[i] == character)
-			return (i);
-		i--;
-	}
-	return (0);
-}
+// 	convert = (char *)s;
+// 	character = (char)c;
+// 	i = ft_strlen(convert);
+// 	while (i >= 0)
+// 	{
+// 		if (convert[i] == character)
+// 			return (i);
+// 		i--;
+// 	}
+// 	return (0);
+// }
 
 void	execute_builtin_cmds(t_cmd *cmd_struct, t_env *our_env)
 {
