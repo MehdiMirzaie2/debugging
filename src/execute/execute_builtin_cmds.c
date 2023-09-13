@@ -6,7 +6,7 @@
 /*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 10:43:28 by mmirzaie          #+#    #+#             */
-/*   Updated: 2023/09/11 20:33:01 by mehdimirzai      ###   ########.fr       */
+/*   Updated: 2023/09/12 15:13:30 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ the last position of that character
 
 void	execute_builtin_cmds(t_cmd *cmd_struct, t_env *our_env)
 {
-	// char	**cmd_and_args_joined;
-
+	if (ft_strncmp(cmd_struct->cmd, "$?", 2) == 0)
+		printf("command not found %d", errno);
 	if (ft_strncmp(cmd_struct->cmd, "cd", 2) == 0)
 		ft_cd(cmd_struct->args->str, &our_env);
 	else if (ft_strncmp(cmd_struct->cmd, "env", 3) == 0)

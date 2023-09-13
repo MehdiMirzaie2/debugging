@@ -6,7 +6,7 @@
 /*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 11:07:14 by mmirzaie          #+#    #+#             */
-/*   Updated: 2023/09/12 10:59:13 by mehdimirzai      ###   ########.fr       */
+/*   Updated: 2023/09/13 15:23:43 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,135 +18,63 @@ currently not taking care of commands that have their paths included in the
 input.
 */
 
-bool	is_builtin(char	*cmd)
+void	execute(t_ast *ast_node, t_env *our_env)
 {
-	if (!ft_strncmp(cmd, "cd", 2) || !ft_strncmp(cmd, "env", 3)
-		|| !ft_strncmp(cmd, "echo", 4) || !ft_strncmp(cmd, "pwd", 3))
-		return (true);
-	return (false);
+	if (is_builtin(ast_node->u_node.cmd->cmd))
+		execute_builtin_cmds(ast_node->u_node.cmd, our_env);	
+	else
+		execute_system_cmds(ast_node->u_node.cmd, our_env);
 }
 
-int	re_input(int from, int to)
+void	one_command(t_ast *ast, t_env *our_env)
 {
-	if (dup2(from, to) == -1)
-		return (-1);
-	if (close(from) == -1)
-		return (-1);
-	return (0);
-}
-
-int re_output(int from, int to)
-{
-	if (dup2(from, to) == -1)
-		return (-1);
-	if (close(from) == -1)
-		return (-1);
-	return (0);
-}
-
-
-// int	get_process_num(t_ast *ast)
-// {
-// 	int	num;
-
-// 	num = 1;
-// 	while (ast)
-// 	{
-// 		ast = ast->u_node.link;
-// 		num++;
-// 	}
-// 	return (num);
-// }
-
-// typedef struct s_pipex		t_pipex;
-// struct s_pipex
-// {
-// 	int		process_num;
-// 	int		*pids;
-// 	int		pipes[][2];
-// };
-
-// #define MAX_PROCESS_NUM 30
-
-// int	open_pipes(t_pipex pipex)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (i < pipex.process_num + 1)
-// 	{
-// 		if (pipe(pipex.pipes[i++]) == -1)
-// 		{
-// 			printf("Error with creating pipe\n");
-// 			return (1);
-// 		}
-// 	}
-// 	return (0);
-// }
-
-// int	create_middle_process(t_pipex pipex)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (i < pipex.process_num)
-// 	{
-// 		pipex.pids[i] = fork();
-// 		if (pipex.pids[i] == -1)
-// 		{
-// 			printf("Error with creating process\n");
-// 			return (2);
-// 		}
-// 		if (pipex.pids[i] == 0)
-// 			middle_child(args, pipes, i);
-// 		i++;
-// 	}
-// 	return (0);
-// }
-
-int	execute(t_ast *ast, t_env *our_env)
-{
-	t_ast	*next_ast_node;
-	char	*cmd;
-	// int		pids[MAX_PROCESS_NUM];
-	// int		pipes[MAX_PROCESS_NUM + 1];
-
-	if (ast->type == E_ASTCMD)
-	{
-		if (is_builtin(ast->u_node.cmd->cmd))
-			execute_builtin_cmds(ast->u_node.cmd, our_env);	
-		else
-		{
-			if (fork() == 0)
-				execute_system_cmds(ast->u_node.cmd, our_env);	
-			wait(NULL);
-		}
-	}
+	if (is_builtin(ast->u_node.cmd->cmd))
+		execute_builtin_cmds(ast->u_node.cmd, our_env);	
 	else
 	{
-		/*creating the pipes*/
-		// int process_num;
-		
-		// process_num = get_process_num(t_ast);
-		// ppp = (t_pipex){.pids = pids, .pipes = pipes, .process_num = process_num};
-		// open_pipes(ppp);
+		if (fork() == 0) //add error checks
+			execute_system_cmds(ast->u_node.cmd, our_env);	
+		wait(NULL);
+	}
+}
 
-		/*executing*/
-		next_ast_node = get_next_node(ast);
-		while (next_ast_node != NULL)
+int	process_ast(t_ast *ast, t_env *our_env)
+{
+	t_ast	*next_ast_node;
+	int		pipe1[2];
+	// int		pid;
+	int 	i = 0;
+	int		num_cmds;
+
+	if (ast->type == E_ASTCMD)
+		one_command(ast, our_env);
+	else
+	{
+		if (fork() == 0)
 		{
-			cmd = next_ast_node->u_node.cmd->cmd;
-			if (is_builtin(cmd))
-				execute_builtin_cmds(next_ast_node->u_node.cmd, our_env);
-			else
-				execute_system_cmds(next_ast_node->u_node.cmd, our_env);
-			next_ast_node = get_next_node(ast);
-		}	
+			num_cmds = get_num_cmd(ast);
+			while (i < num_cmds)
+			{
+				next_ast_node = get_next_node(ast);
+				pipe(pipe1);
+				if (fork() == 0)
+				{
+					close(pipe1[0]); //closing read end of pipe because it is not being used
+					if (i != num_cmds - 1)
+						dup2(pipe1[1], STDOUT_FILENO);
+					close(pipe1[1]);
+					execute(next_ast_node, our_env);
+				}
+				wait(NULL);
+				if (i != num_cmds - 1)
+					dup2(pipe1[0], STDIN_FILENO);
+				close(pipe1[0]);
+				close(pipe1[1]);
+				i++;
+			}
+			exit(EXIT_SUCCESS);
+		}
+		wait(NULL);
 	}
 	return (0);
 }
-
-// figure out how many process are needed then work out, then figure the implemention of
-// two pipes then multiple pipes.
-
-// take care of input are output redirections

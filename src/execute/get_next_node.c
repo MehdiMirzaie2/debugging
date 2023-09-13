@@ -6,7 +6,7 @@
 /*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 10:15:27 by mmirzaie          #+#    #+#             */
-/*   Updated: 2023/09/11 20:28:29 by mehdimirzai      ###   ########.fr       */
+/*   Updated: 2023/09/13 15:21:18 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 t_ast	*get_next_node(t_ast *ast)
 {
-	// t_ast			*ast = ast;
 	static int		go_right = 0;
 	static bool		checked_left = false;
 	static bool		is_recursive = false;
@@ -59,11 +58,3 @@ t_ast	*get_next_node(t_ast *ast)
 	is_recursive = false;
 	return (next_node);
 }
-
-// t_cmd	*get_next_cmd(t_ast *ast)
-// {
-// 	t_ast	*node = get_next_node(ast);
-// 	char	**cmd;
-
-
-// }

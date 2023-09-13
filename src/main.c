@@ -26,6 +26,7 @@ char *rl_gets(char **line_read, char *header)
 {
 	/* If the buffer has already been allocated, return the memory
 		to the free pool. */
+	// printf("%d\n", getpid());
 	if (*line_read)
 	{
 		free(*line_read);
@@ -50,7 +51,6 @@ char *rl_gets(char **line_read, char *header)
 }
 // void print_tokenlst(t_token *start);
 // void tast_print(t_ast *ast);
-
 
 int main(int argc, char **argv, char **env)
 {
@@ -82,8 +82,8 @@ int main(int argc, char **argv, char **env)
 		t_token *lst = tlst_create(line_read);
 		ast = ast_build(lst);
 		ast_expandall(ast, our_env);
-		tast_print(ast);
-		execute(ast, our_env);
+		// tast_print(ast);
+		process_ast(ast, our_env);
 
 		// Free the memory after you're done using it
 		tlst_destroy(lst);
