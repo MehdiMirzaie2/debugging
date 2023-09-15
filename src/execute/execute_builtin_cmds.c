@@ -6,7 +6,7 @@
 /*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 10:43:28 by mmirzaie          #+#    #+#             */
-/*   Updated: 2023/09/13 15:31:07 by mehdimirzai      ###   ########.fr       */
+/*   Updated: 2023/09/15 14:11:20 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,15 @@ void	execute_builtin_cmds(t_cmd *cmd_struct, t_env *our_env)
 		export(our_env, cmd_struct->args->str);
 	else if (ft_strncmp(cmd_struct->cmd, "echo", 4) == 0)
 	{
-		if (cmd_struct->strout == NULL)
-			ft_echo(cmd_struct->args->str, NULL, 0);
-		else
-			ft_echo(cmd_struct->args->str, cmd_struct->strout->str, 0);
+		ft_echo(cmd_struct->args->str, false);
+		// if (cmd_struct->strout == NULL)
+		// 	ft_echo(cmd_struct->args->str, NULL, 0);
+		// else
+		// 	ft_echo(cmd_struct->args->str, cmd_struct->strout->str, 0);
 	}
 	else if (ft_strncmp(cmd_struct->cmd, "unset", 5) == 0)
 		unset(our_env, cmd_struct->args->str);
 	else if (ft_strncmp(cmd_struct->cmd, "pwd", 3) == 0)
 		ft_pwd();
+	exit(EXIT_SUCCESS);
 }

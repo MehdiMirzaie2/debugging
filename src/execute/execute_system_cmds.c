@@ -6,7 +6,7 @@
 /*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 20:33:30 by mehdimirzai       #+#    #+#             */
-/*   Updated: 2023/09/13 15:46:33 by mehdimirzai      ###   ########.fr       */
+/*   Updated: 2023/09/15 14:22:00 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,11 @@ void	execute_system_cmds(t_cmd *cmd, t_env *env)
 	cmd_args_joined = join_cmd(cmd);
 	paths_splitted = ft_split(env_get(env, "PATH"), ':');
 	cmd_plus_path = cmd_path(paths_splitted, cmd->cmd);
-	if (execve(cmd_plus_path, cmd_args_joined, NULL) == -1)
+	ft_putstr_fd(cmd_plus_path, 2);
+	ft_putstr_fd("\n", 2);
+	ft_putstr_fd(*cmd_args_joined, 2);
+	ft_putstr_fd("\n", 2);
+	if (execve(cmd_plus_path, cmd_args_joined, NULL) < 0)
 	{
 		printf("failed at execve\n");
 		exit(EXIT_FAILURE);

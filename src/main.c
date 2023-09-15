@@ -13,7 +13,6 @@
 #include "shell.h"
 #include "execute.h"
 
-
 int	g_value;
 
 // we need to take care of exit status
@@ -39,7 +38,7 @@ char *rl_gets(char **line_read, char *header)
 	// this takes care of control d, needs to free mem.
 	if (!(*line_read))
 	{
-		printf("control d\n");
+		printf("control d %d\n", getpid());
 		exit(EXIT_SUCCESS);
 	}
 	/* TODO: Handle quote modes */
@@ -59,6 +58,7 @@ int main(int argc, char **argv, char **env)
 	t_env		*our_env;
 	static char *line_read  = NULL;
 	char	buff[PATH_MAX + 1];
+	const int		in = dup(STDIN_FILENO);
 
 	(void)argc;
 	(void)argv;
@@ -82,12 +82,13 @@ int main(int argc, char **argv, char **env)
 		t_token *lst = tlst_create(line_read);
 		ast = ast_build(lst);
 		ast_expandall(ast, our_env);
-		// tast_print(ast);
+		tast_print(ast);
 		process_ast(ast, our_env);
 
 		// Free the memory after you're done using it
 		tlst_destroy(lst);
 		ast_memman(&ast, 0, true);
+		dup2(in, STDIN_FILENO); //removing the stdin buffer.
 	}
 	free_env(our_env);
 	return (0);

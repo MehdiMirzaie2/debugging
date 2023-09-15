@@ -57,7 +57,8 @@ t_fd	redirect_output(char *filename);
 void	ft_cd(char *path, t_env **our_env);
 void	ft_env(t_env *our_env);
 void	export(t_env *our_env, char *args);
-void	ft_echo(char *str, char *filename, int option);
+// void	ft_echo(char *str, char *filename, int option);
+void	ft_echo(char *str, bool option);
 void	unset(t_env *our_env, char *name);
 void	ft_pwd(void);
 
