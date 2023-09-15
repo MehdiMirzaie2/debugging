@@ -6,7 +6,7 @@
 /*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 11:07:14 by mmirzaie          #+#    #+#             */
-/*   Updated: 2023/09/15 14:10:52 by mehdimirzai      ###   ########.fr       */
+/*   Updated: 2023/09/15 15:17:36 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void	handle_heredoc(t_ast *ast)
 		exit(127);
 	}
 	limiter_len = ft_strlen(ast->u_node.cmd->heredoc->str);
-	printf("got to %d\n", __LINE__);
 	lines = readline("heredoc> ");
 	while (ft_strncmp(lines, ast->u_node.cmd->heredoc->str, limiter_len) != 0)
 	{
@@ -71,11 +70,8 @@ int	open_file(t_ast *ast, int pipe1[2], bool isone_cmd)
 	{
 		file_fd = open(ast->u_node.cmd->strout->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (file_fd < 0)
-		{
 			ft_putstr_fd("could not open outfile\n", 2);
-		}
 		redirect(file_fd, STDOUT_FILENO);
-		close(pipe1[1]);
 	}
 	else
 	{
@@ -84,11 +80,11 @@ int	open_file(t_ast *ast, int pipe1[2], bool isone_cmd)
 		else
 		{
 			if (dup2(pipe1[1], STDOUT_FILENO) < 0)
-			printf("dup2 error on  %d\n", __LINE__);
+				printf("dup2 error on  %d\n", __LINE__);
 		}
-		close(pipe1[1]);
 		file_fd = 0;
 	}
+	close(pipe1[1]);
 	return (file_fd);
 }
 
@@ -119,7 +115,7 @@ int	process_ast(t_ast *ast, t_env *our_env)
 	int		file_fd;
 	int 	i = 0;
 	int		num_cmds;
-	bool	isone_cmd = false;
+	bool	isone_cmd;
 
 	isone_cmd = false;
 	if (ast->type == E_ASTCMD)
@@ -145,7 +141,7 @@ int	process_ast(t_ast *ast, t_env *our_env)
 			execute(next_ast_node, our_env);
 		}
 		wait(NULL); // wait for child
-		if (!isone_cmd)
+		if (isone_cmd == false)
 			if (dup2(pipe1[0], STDIN_FILENO) < 0)
 				perror("dup to pipe1[0] error\n");
 		close(pipe1[0]);

@@ -82,7 +82,7 @@ int main(int argc, char **argv, char **env)
 		t_token *lst = tlst_create(line_read);
 		ast = ast_build(lst);
 		ast_expandall(ast, our_env);
-		tast_print(ast);
+		// tast_print(ast);
 		process_ast(ast, our_env);
 
 		// Free the memory after you're done using it
