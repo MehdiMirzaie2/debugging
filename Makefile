@@ -48,7 +48,6 @@ SRCS        :=	main.c \
 				execute/execute_builtin_cmds.c \
 				execute/execute_system_cmds.c \
 				execute/get_next_node.c \
-				execute/pipe.c \
 				execute/utils.c \
 
 SRCS        := $(SRCS:%=$(SRC_DIR)/%)

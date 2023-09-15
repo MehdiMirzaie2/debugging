@@ -6,7 +6,7 @@
 /*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 13:41:38 by mehdimirzai       #+#    #+#             */
-/*   Updated: 2023/09/13 11:18:53 by mehdimirzai      ###   ########.fr       */
+/*   Updated: 2023/09/13 16:57:13 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ bool	is_builtin(char	*cmd)
 	return (false);
 }
 
-int	re_input(int from, int to)
+int	redirect(int from, int to)
 {
 	if (dup2(from, to) == -1)
 		return (-1);
@@ -30,14 +30,23 @@ int	re_input(int from, int to)
 	return (0);
 }
 
-int re_output(int from, int to)
-{
-	if (dup2(from, to) == -1)
-		return (-1);
-	if (close(from) == -1)
-		return (-1);
-	return (0);
-}
+// int	re_input(int from, int to)
+// {
+// 	if (dup2(from, to) == -1)
+// 		return (-1);
+// 	if (close(from) == -1)
+// 		return (-1);
+// 	return (0);
+// }
+
+// int	re_output(int from, int to)
+// {
+// 	if (dup2(from, to) == -1)
+// 		return (-1);
+// 	if (close(from) == -1)
+// 		return (-1);
+// 	return (0);
+// }
 
 int	get_num_cmd(t_ast *ast)
 {

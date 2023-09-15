@@ -6,7 +6,7 @@
 /*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 10:15:27 by mmirzaie          #+#    #+#             */
-/*   Updated: 2023/09/13 15:21:18 by mehdimirzai      ###   ########.fr       */
+/*   Updated: 2023/09/14 00:02:50 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,43 +18,55 @@ t_ast	*get_next_node(t_ast *ast)
 	static int		go_right = 0;
 	static bool		checked_left = false;
 	static bool		is_recursive = false;
-	static bool		checked_all = false;
-	t_ast			*next_node;
+	// static bool		checked_all = false;
+	t_ast			*next_node = NULL;
 	int				i;
 
 	i = 0;
-	if (checked_all == true)
+	if (!ast)
 		return (NULL);
+	// if (checked_all == true)
+	// 	return (NULL);
 	if (is_recursive == false)
-		while (i < go_right)
+		while (i++ < go_right)
 			ast = ast->u_node.link.second;
 	if (checked_left == false)
 	{
 		next_node = ast->u_node.link.first;
 		checked_left = true;
+		// ft_putnbr_fd(getpid(), 2);
+		// ft_putstr_fd(" returing: ", 2);
+		// ft_putstr_fd(next_node->u_node.cmd->cmd, 2);
+		// ft_putstr_fd("\n", 2);
+		// return (next_node);
 	}
 	else
 	{
 		if (ast->type == E_ASTCMD)
 			return (NULL);
-		/* check if the second node has multiple commads if it does
-			point ast to second then recursively call the fucntion.
-			this will execute the first if statement, and return the first command insider second.
-		*/
-		if (ast->u_node.link.second->type == E_ASTLINK)
+		if (ast->type == E_ASTLINK)
 		{
-			ast = ast->u_node.link.second;
-			checked_left = false;
-			is_recursive = true;
-			go_right++;
-			get_next_node(ast);
+			if (ast->u_node.link.second->type == E_ASTCMD)
+				next_node = ast->u_node.link.second;
+			else{
+				ast = ast->u_node.link.second;
+				checked_left = false;
+				is_recursive = true;
+				go_right++;
+				next_node = ast->u_node.link.first;
+				checked_left = true;	
+			}
+			// get_next_node(ast);
 		}
-		/* if we ever reach this point it means we are at the bottom of the nodes, therefore, no more commands,
-		that is why we make ast == NULL"
-		*/
-		next_node = ast->u_node.link.second;
-		checked_all = true;
+		// next_node = ast->u_node.link.second;
+		// checked_all = true;
 	}
 	is_recursive = false;
+
+	ft_putnbr_fd(getpid(), 2);
+	ft_putstr_fd(" returing: ", 2);
+	ft_putstr_fd(next_node->u_node.cmd->cmd, 2);
+	ft_putstr_fd("\n", 2);
+
 	return (next_node);
 }

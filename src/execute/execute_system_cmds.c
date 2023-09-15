@@ -6,7 +6,7 @@
 /*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 20:33:30 by mehdimirzai       #+#    #+#             */
-/*   Updated: 2023/09/11 22:21:28 by mehdimirzai      ###   ########.fr       */
+/*   Updated: 2023/09/13 15:46:33 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 char	**join_cmd(t_cmd *cmd)
 {
-	char	**joined;
-	int		num_args;
+	char		**joined;
+	int			num_args;
 	t_arglst	*args_ref;
 
 	num_args = 1;
@@ -85,10 +85,8 @@ char	*cmd_path(char **splitted_paths, char *cmd)
 }
 
 // extern char **environ;
-
 void	execute_system_cmds(t_cmd *cmd, t_env *env)
 {
-	(void)env;
 	char	**cmd_args_joined;
 	char	*cmd_plus_path;
 	char	**paths_splitted;
@@ -97,5 +95,8 @@ void	execute_system_cmds(t_cmd *cmd, t_env *env)
 	paths_splitted = ft_split(env_get(env, "PATH"), ':');
 	cmd_plus_path = cmd_path(paths_splitted, cmd->cmd);
 	if (execve(cmd_plus_path, cmd_args_joined, NULL) == -1)
+	{
+		printf("failed at execve\n");
 		exit(EXIT_FAILURE);
+	}
 }
