@@ -10,10 +10,10 @@ struct s_pipex
 	t_ast	*cmd;
 };
 
-t_ast	*get_next_node(t_ast *ast);
-void	execute_builtin_cmds(t_cmd *cmd_struct, t_env *our_env);
+t_ast	*get_next_node(t_ast *ast, bool reset);
+void	execute_builtin_cmds(t_cmd *cmd_struct, t_env **our_env);
 void	execute_system_cmds(t_cmd *cmd, t_env *env);
-int		process_ast(t_ast *ast, t_env *our_env);
+int		process_ast(t_ast *ast, t_env **our_env);
 
 // utils
 int		get_num_cmd(t_ast *ast);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmirzaie <mmirzaie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 13:21:02 by mmirzaie          #+#    #+#             */
-/*   Updated: 2023/08/29 16:00:59 by mmirzaie         ###   ########.fr       */
+/*   Updated: 2023/09/16 10:42:41 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,13 @@ void add_node_to_env(t_env **our_env, char *name, char *args)
 // the following should append the path to existing paths
 // export PATH=$PATH:/place/with/the/file
 
-void	export(t_env *our_env, char *args)
+void	export(t_env **our_env, char *args)
 {
 	t_env	*ref;
 	char **name_and_args;
 	int name_len;
 
-	ref = our_env;
+	ref = *our_env;
 	name_and_args = ft_split(args, '=');
 	name_len = ft_strlen(name_and_args[0]);
 	if (ft_isdigit(*name_and_args[0]))
@@ -73,7 +73,7 @@ void	export(t_env *our_env, char *args)
 		ref->args = ft_strdup(name_and_args[1]);
 	}
 	else
-		add_node_to_env(&our_env, name_and_args[0], name_and_args[1]);
+		add_node_to_env(our_env, name_and_args[0], name_and_args[1]);
 	free(name_and_args[0]);
 	free(name_and_args[1]);
 }

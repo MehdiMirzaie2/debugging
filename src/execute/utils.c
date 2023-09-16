@@ -6,7 +6,7 @@
 /*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/12 13:41:38 by mehdimirzai       #+#    #+#             */
-/*   Updated: 2023/09/13 16:57:13 by mehdimirzai      ###   ########.fr       */
+/*   Updated: 2023/09/16 10:34:50 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ bool	is_builtin(char	*cmd)
 {
 	if (!ft_strncmp(cmd, "cd", 2) || !ft_strncmp(cmd, "env", 3)
 		|| !ft_strncmp(cmd, "echo", 4) || !ft_strncmp(cmd, "pwd", 3)
-		|| !ft_strncmp(cmd, "$?", 2))
+		|| !ft_strncmp(cmd, "$?", 2) || !ft_strncmp(cmd, "export", 6)
+		|| !ft_strncmp(cmd, "unset", 5))
 		return (true);
 	return (false);
 }
