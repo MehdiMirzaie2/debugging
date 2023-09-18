@@ -6,7 +6,7 @@
 /*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 11:07:14 by mmirzaie          #+#    #+#             */
-/*   Updated: 2023/09/16 10:48:55 by mehdimirzai      ###   ########.fr       */
+/*   Updated: 2023/09/18 13:15:22 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,15 @@ currently not taking care of commands that have their paths included in the
 input.
 */
 
+void	terminate(int sig)
+{
+	if (sig == SIGUSR1)
+	{
+		ft_putstr_fd("exiting child\n", 2);
+		exit(130);
+	}
+}
+
 void	handle_heredoc(t_ast *ast)
 {
 	const char	*template = "/tmp/mytempfileXXXXXX";
@@ -25,7 +34,8 @@ void	handle_heredoc(t_ast *ast)
 	char		*filename;
 	char		*lines;
 	int			limiter_len;
-
+	// const	int	in = dup(STDIN_FILENO);
+	
 	filename = ft_strdup(template);
 	fd = open(filename, O_CREAT | O_RDWR | O_EXCL, S_IRUSR | S_IWUSR);
 	if (fd == -1)
@@ -38,10 +48,20 @@ void	handle_heredoc(t_ast *ast)
 	lines = readline("heredoc> ");
 	while (ft_strncmp(lines, ast->u_node.cmd->heredoc->str, limiter_len) != 0)
 	{
+		// signal(SIGUSR1, terminate);
 		ft_putstr_fd(lines, fd);
 		ft_putchar_fd('\n', fd);
 		free(lines);
 		lines = readline("heredoc> ");
+		if (!lines || g_value == SIGUSR1)
+		{
+			printf("deleting\n");
+			// dup2(in, STDIN_FILENO);
+			// close(in);
+			if (unlink(filename) == -1)
+				perror("unlink");
+			exit(130);
+		}
 	}
 	close(fd);
 	fd = open(filename, O_RDONLY);
@@ -119,6 +139,8 @@ int	process_ast(t_ast *ast, t_env **our_env)
 	int		out = dup(STDOUT_FILENO);
 	int		in = dup(STDIN_FILENO);
 	bool	reset = false;
+	int		child_id = 0;
+	int		status;
 
 	
 	if (ast->type == E_ASTCMD && ast->u_node.cmd->heredoc == NULL)
@@ -126,16 +148,16 @@ int	process_ast(t_ast *ast, t_env **our_env)
 	else
 	{
 		num_cmds = get_num_cmd(ast);
-		ft_putstr_fd("\n", 2);
+		// ft_putstr_fd("\n", 2);
 		while (i < num_cmds)
 		{
 			if (i != 0 && i == num_cmds - 1)
 				reset = true;
 			next_ast_node = get_next_node(ast, reset);
-			printf("%s\n", next_ast_node->u_node.cmd->cmd);
+			// printf("%s\n", next_ast_node->u_node.cmd->cmd);
 			if (pipe(pipe1) < 0)
 				perror("error makeing pipe\n");
-			if (fork() == 0)
+			if ((child_id = fork()) == 0)
 			{
 				file_fd = open_file(next_ast_node, pipe1, num_cmds, i);
 				close(pipe1[0]);
@@ -148,7 +170,9 @@ int	process_ast(t_ast *ast, t_env **our_env)
 				execute(next_ast_node, our_env);
 				exit(EXIT_SUCCESS);
 			}
-			wait(NULL); // wait for child
+			wait(&status); // wait for child
+			if (status == 130)
+				continue;
 			if (dup2(pipe1[0], STDIN_FILENO) < 0)
 				perror("dup to pipe1[0] error\n");
 			close(pipe1[0]);
@@ -158,6 +182,6 @@ int	process_ast(t_ast *ast, t_env **our_env)
 		wait(NULL);
 	}
 	dup2(in, STDIN_FILENO);
-	return (0);
+	return (child_id);
 }
 // <infile sort | uniq -c | sort -r | head -3 > outfile
