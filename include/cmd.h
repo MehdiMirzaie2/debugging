@@ -1,10 +1,13 @@
+#ifndef CMD_H
+# define CMD_H
+
 #include "arglst.h"
 #include "lexer.h"
 #include "iolst.h"
 
 typedef struct s_cmd t_cmd;
 
-struct s_cmd 
+struct s_cmd
 {
 	char *cmd;
 	t_arglst *args;
@@ -17,5 +20,18 @@ struct s_cmd
 	t_iolst *strapp;
 };
 
+
+// struct s_cmd
+// {
+// 	char *cmd;
+// 	t_arglst *args;
+
+// 	bool	has_pipe;
+// 	bool	has_redirect;
+// 	t_iolst	*redirects;
+// };
+
 void cmd_memman(t_cmd	**cmd, bool destroy);
 void cmd_build(t_cmd *cmd, t_token **token);
+
+#endif

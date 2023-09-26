@@ -6,10 +6,12 @@
 /*   By: mehdimirzaie <mehdimirzaie@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 16:48:35 by mmirzaie          #+#    #+#             */
-/*   Updated: 2023/09/18 13:28:47 by mehdimirzai      ###   ########.fr       */
+/*   Updated: 2023/09/26 12:45:28 by mehdimirzai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <sys/wait.h>
+#include <readline/readline.h>
 #include "shell.h"
 
 void    delete_tempfile(void)

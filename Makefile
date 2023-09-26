@@ -3,16 +3,21 @@ NAME        := minishell
 
 LIBS        := ft
 LIBS_TARGET := lib/libft.a
+# /opt/homebrew/opt/readline/lib/libreadline.a
 
 INCS        := include	\
 			   lib/include
+# /opt/homebrew/opt/readline/include
+
 OS := $(shell uname)
 ARCH := $(shell uname -m)
 
 ifeq ($(OS), Darwin) # MacOS specific commands
-ifeq ($(ARCH),arm64)
-LIBS_TARGET += /opt/homebrew/opt/readline/lib/libreadline.a
-INC	+= /opt/homebrew/opt/readline/include
+ifeq ($(ARCH), arm64)
+# LIBS_TARGET += /opt/homebrew/opt/readline/lib/libreadline.a
+LIBS_TARGET += /opt/homebrew/Cellar/readline/8.2.1
+INC	+= /opt/homebrew/Cellar/readline/8.2.1/include
+# INC	+= /opt/homebrew/opt/readline/include
 else
 LIBS_TARGET += /usr/local/Cellar/readline/8.1.2/lib/libreadline.a
 INCS += /usr/local/Cellar/readline/8.1.2/include
@@ -31,24 +36,27 @@ SRCS        :=	main.c \
 				utils/ft_strdup_extra.c \
 				utils/ft_space.c \
 				utils/expand_utils.c \
+				utils/termios.c \
 				parser/lexer.c \
 				parser/lexer_utils.c \
+				parser/debug_token.c \
 				parser/ast.c \
 				parser/debug_ast.c \
 				parser/cmd_builder.c \
 				parser/ast_builder.c \
-				parser/token.c \
 				parser/expand.c \
 				builtins/cd.c \
 				builtins/env.c \
 				builtins/echo.c \
 				builtins/pwd.c \
+				builtins/exit.c \
 				redirections/redirect_output.c \
 				execute/execute.c \
 				execute/execute_builtin_cmds.c \
 				execute/execute_system_cmds.c \
 				execute/get_next_node.c \
 				execute/utils.c \
+				execute/heredoc.c
 
 SRCS        := $(SRCS:%=$(SRC_DIR)/%)
 
@@ -92,7 +100,7 @@ lclean:
 
 # full clean, clean all objects and libraries and binaries
 fclean: clean
-	for f in $(dir $(LIBS_TARGET)); do $(MAKE) -C $$f fclean; done
+	# for f in $(dir $(LIBS_TARGET)); do $(MAKE) -C $$f fclean; done
 	$(RM) $(NAME)
 	$(call print_fclean,$(NAME))
 
